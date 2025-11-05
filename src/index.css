@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Cyberpunk Dark Arena Theme */
+    --background: 220 25% 8%;
+    --foreground: 180 100% 95%;
+
+    --card: 220 20% 12%;
+    --card-foreground: 180 100% 95%;
+
+    --popover: 220 25% 10%;
+    --popover-foreground: 180 100% 95%;
+
+    /* Neon Cyan Primary */
+    --primary: 180 100% 50%;
+    --primary-foreground: 220 25% 8%;
+
+    /* Electric Blue Secondary */
+    --secondary: 210 100% 55%;
+    --secondary-foreground: 180 100% 95%;
+
+    /* Subtle Dark Muted */
+    --muted: 220 15% 20%;
+    --muted-foreground: 180 20% 65%;
+
+    /* Encrypted Purple Accent */
+    --accent: 270 80% 60%;
+    --accent-foreground: 180 100% 95%;
+
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 180 100% 95%;
+
+    --border: 220 20% 18%;
+    --input: 220 20% 18%;
+    --ring: 180 100% 50%;
+
+    --radius: 0.75rem;
+
+    /* Custom Design Tokens */
+    --neon-glow: 180 100% 50%;
+    --encrypted-glow: 270 80% 60%;
+    --arena-bg: 220 25% 8%;
+    
+    /* Gradients */
+    --gradient-cyber: linear-gradient(135deg, hsl(180 100% 50% / 0.2), hsl(270 80% 60% / 0.2));
+    --gradient-encrypted: linear-gradient(90deg, hsl(180 100% 50% / 0.3), hsl(270 80% 60% / 0.3));
+    
+    /* Shadows */
+    --shadow-neon: 0 0 20px hsl(180 100% 50% / 0.4), 0 0 40px hsl(180 100% 50% / 0.2);
+    --shadow-encrypted: 0 0 30px hsl(270 80% 60% / 0.5);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
