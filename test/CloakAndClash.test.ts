@@ -161,4 +161,38 @@ describe("CloakAndClash", () => {
     expect(await decryptUint32(contractAddress, signers.alice, statsAlice.wins)).to.eq(1);
     expect(await decryptUint32(contractAddress, signers.bob, statsBob.losses)).to.eq(1);
   });
+
+  it("Should reject invalid move values", async function () {
+    const { contract, contractAddress } = await loadFixture(deployCloakAndClashFixture);
+
+    const invalidMove = 3; // Invalid move (only 0, 1, 2 are valid)
+    const { handle: handle1, proof: proof1 } = await encryptMove(contractAddress, signers.alice, invalidMove);
+
+    await expect(
+      contract.connect(signers.alice).createMatch(
+        signers.bob.address,
+        handle1,
+        proof1
+      )
+    ).to.be.revertedWith("Move must be 0 (Rock), 1 (Paper), or 2 (Scissors)");
+  });
+
+  it("Should handle match timeouts correctly", async function () {
+    const { contract, contractAddress } = await loadFixture(deployCloakAndClashFixture);
+
+    // Create a match
+    const { handle: handle1, proof: proof1 } = await encryptMove(contractAddress, signers.alice, 0);
+    await contract.connect(signers.alice).createMatch(signers.bob.address, handle1, proof1);
+
+    // Fast forward time past the round duration
+    await ethers.provider.send("evm_increaseTime", [3 * 60 + 1]); // 3 minutes + 1 second
+    await ethers.provider.send("evm_mine");
+
+    // Bob should be able to resolve with timeout win
+    await contract.connect(signers.bob).resolveMatch(1);
+
+    const matchView = await contract.getMatch(1);
+    expect(matchView.outcomeReady).to.eq(true);
+    expect(matchView.status).to.eq(2); // Resolved
+  });
 });
