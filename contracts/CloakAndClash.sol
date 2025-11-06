@@ -21,6 +21,7 @@ contract CloakAndClash is SepoliaConfig {
     uint8 private constant RESULT_TIE = 0;
     uint8 private constant RESULT_A_WINS = 1;
     uint8 private constant RESULT_B_WINS = 2;
+    uint8 private constant MAX_MOVE_VALUE = 2; // Maximum valid move value (Scissors)
 
     enum MatchStatus {
         WaitingForOpponent,
