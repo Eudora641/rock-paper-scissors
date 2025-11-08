@@ -47,8 +47,13 @@ export const MatchmakingLobby = () => {
           <div>
             <h2 className="text-2xl font-bold text-foreground mb-2">Match Lobby</h2>
             <p className="text-muted-foreground flex items-center gap-2">
-              <Swords className="h-4 w-4" />
-              Waiting for opponent...
+              <Swords className="h-4 w-4 animate-pulse" />
+              <span className="animate-pulse">Waiting for opponent</span>
+              <span className="flex gap-1 ml-2">
+                <span className="w-1 h-1 bg-current rounded-full animate-bounce" style={{ animationDelay: "0s" }}></span>
+                <span className="w-1 h-1 bg-current rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></span>
+                <span className="w-1 h-1 bg-current rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></span>
+              </span>
             </p>
           </div>
 
