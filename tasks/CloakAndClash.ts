@@ -24,12 +24,16 @@ task("clash:create-match", "Create a match with your encrypted move")
   .setAction(async (args: TaskArguments, hre) => {
     const { ethers, deployments, fhevm } = hre;
 
-    const move = parseInt(args.move, 10);
-    if (!Number.isInteger(move) || move < 0 || move > 2) {
-      throw new Error("Move must be 0 (Rock), 1 (Paper), or 2 (Scissors)");
-    }
+    try {
+      const move = parseInt(args.move, 10);
+      if (!Number.isInteger(move) || move < 0 || move > 2) {
+        throw new Error("Move must be 0 (Rock), 1 (Paper), or 2 (Scissors)");
+      }
 
-    await fhevm.initializeCLIApi();
+      console.log(`🎯 Creating match with move: ${["Rock", "Paper", "Scissors"][move]}`);
+      console.log(`👥 Opponent: ${args.opponent}`);
+
+      await fhevm.initializeCLIApi();
 
     const deployment = args.address ? { address: args.address } : await deployments.get(CONTRACT_NAME);
     const [signer] = await ethers.getSigners();
@@ -44,6 +48,11 @@ task("clash:create-match", "Create a match with your encrypted move")
     console.log(`Submitted createMatch tx: ${tx.hash}`);
     const receipt = await tx.wait();
     console.log(`createMatch confirmed in block ${receipt?.blockNumber}`);
+    console.log(`✅ Match created successfully!`);
+    } catch (error) {
+      console.error(`❌ Failed to create match:`, error);
+      process.exit(1);
+    }
   });
 
 task("clash:submit-move", "Submit the opponent move for an existing match")
