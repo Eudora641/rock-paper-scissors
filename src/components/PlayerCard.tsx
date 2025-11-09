@@ -23,11 +23,16 @@ export const PlayerCard = ({ playerName, isReady, isYou = false }: PlayerCardPro
     >
       <div className="flex items-center gap-4">
         <div className={cn(
-          "h-12 w-12 rounded-full flex items-center justify-center",
+          "h-12 w-12 rounded-full flex items-center justify-center relative",
           "bg-gradient-to-br from-primary/20 to-accent/20 border-2",
-          isReady ? "border-primary" : "border-border"
+          isReady ? "border-primary shadow-lg shadow-primary/30" : "border-border"
         )}>
           <User className="h-6 w-6 text-primary" />
+          {isReady && (
+            <div className="absolute -top-1 -right-1 h-4 w-4 bg-green-500 rounded-full border-2 border-background flex items-center justify-center">
+              <Check className="h-2.5 w-2.5 text-white" />
+            </div>
+          )}
         </div>
         
         <div className="flex-1">
