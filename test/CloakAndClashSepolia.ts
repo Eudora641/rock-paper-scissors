@@ -114,4 +114,38 @@ describe("CloakAndClashSepolia", function () {
     expect(aliceWins).to.eq(1n);
     expect(bobLosses).to.eq(1n);
   });
+
+  it("Should handle multiple matches and accumulate statistics correctly", async function () {
+    const { contract, contractAddress } = await loadFixture(deployCloakAndClashFixture);
+
+    // First match: Alice wins
+    const { handle: handle1, proof: proof1 } = await encryptMove(contractAddress, signers.alice, 0); // Rock
+    const { handle: handle2, proof: proof2 } = await encryptMove(contractAddress, signers.bob, 2);   // Scissors
+
+    await contract.connect(signers.alice).createMatch(signers.bob.address, handle1, proof1);
+    await contract.connect(signers.bob).submitMove(1, handle2, proof2);
+    await contract.connect(signers.alice).resolveMatch(1);
+
+    // Second match: Bob wins
+    const { handle: handle3, proof: proof3 } = await encryptMove(contractAddress, signers.alice, 1); // Paper
+    const { handle: handle4, proof: proof4 } = await encryptMove(contractAddress, signers.bob, 0);   // Rock
+
+    await contract.connect(signers.bob).createMatch(signers.alice.address, handle4, proof4);
+    await contract.connect(signers.alice).submitMove(2, handle3, proof3);
+    await contract.connect(signers.bob).resolveMatch(2);
+
+    // Check accumulated statistics
+    const aliceStats = await contract.getPlayerStats(signers.alice.address);
+    const bobStats = await contract.getPlayerStats(signers.bob.address);
+
+    const aliceWins = await fhevm.userDecryptEuint(FhevmType.euint32, aliceStats.wins, contractAddress, signers.alice);
+    const aliceLosses = await fhevm.userDecryptEuint(FhevmType.euint32, aliceStats.losses, contractAddress, signers.alice);
+    const bobWins = await fhevm.userDecryptEuint(FhevmType.euint32, bobStats.wins, contractAddress, signers.bob);
+    const bobLosses = await fhevm.userDecryptEuint(FhevmType.euint32, bobStats.losses, contractAddress, signers.bob);
+
+    expect(aliceWins).to.eq(1n);
+    expect(aliceLosses).to.eq(1n);
+    expect(bobWins).to.eq(1n);
+    expect(bobLosses).to.eq(1n);
+  });
 });
