@@ -114,6 +114,7 @@ contract CloakAndClash is SepoliaConfig {
     ) external returns (uint256 matchId) {
         require(opponent != address(0), "CloakAndClash: invalid opponent");
         require(opponent != msg.sender, "CloakAndClash: opponent cannot be self");
+        require(!_hasActiveMatch(msg.sender), "CloakAndClash: player already has active match");
 
         matchId = nextMatchId++;
 
@@ -344,6 +345,22 @@ contract CloakAndClash is SepoliaConfig {
         _grantStatsPermissions(stats, player);
 
         emit PlayerStatsUpdated(player, newWins, newLosses, newTies);
+    }
+
+    /**
+     * @dev Check if a player has any active (unfinished) matches
+     * @param player The player address to check
+     * @return True if the player has active matches, false otherwise
+     */
+    function _hasActiveMatch(address player) internal view returns (bool) {
+        for (uint256 i = 1; i < nextMatchId; i++) {
+            Match storage m = _matches[i];
+            if ((m.playerA == player || m.playerB == player) &&
+                (m.status == MatchStatus.WaitingForOpponent || m.status == MatchStatus.WaitingForResolution)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     function _allowMoveForParticipants(euint8 move, address playerA, address playerB) private {
